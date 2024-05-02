@@ -7,7 +7,6 @@ import hfld.rpc.proxy.ServiceProxyFactory;
 public class EasyConsumerExample {
 
     public static void main(String[] args) {
-        // todo 需要获取 UserService 的实现类对象
         // 静态代理
 //        UserService userService = new UserServiceProxy();
         // 动态代理
