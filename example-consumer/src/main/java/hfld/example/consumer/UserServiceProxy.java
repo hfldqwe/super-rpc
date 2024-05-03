@@ -10,7 +10,6 @@ import hfld.rpc.serializer.JdkSerializer;
 import hfld.rpc.serializer.Serializer;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 public class UserServiceProxy implements UserService {
 
