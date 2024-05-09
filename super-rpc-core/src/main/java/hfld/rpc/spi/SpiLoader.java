@@ -63,7 +63,7 @@ public class SpiLoader {
      * 加载某个类型
      * @param loadClass
      */
-    private static Map<String, Class<?>> load(Class<?> loadClass) {
+    public static Map<String, Class<?>> load(Class<?> loadClass) {
         log.info("加载类型为 {} 的SPI", loadClass.getName());
         // 扫描路径，用户自定义的SPI优先级高于系统SPI
         Map<String, Class<?>> keyClassMap = new HashMap<>();
