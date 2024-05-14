@@ -12,7 +12,7 @@ public class RegistryServiceCache {
     /**
      * 服务缓存
      */
-    List<ServiceMetaInfo> serviceCache = null;
+    List<ServiceMetaInfo> serviceCache;
 
     /**
      * 写缓存

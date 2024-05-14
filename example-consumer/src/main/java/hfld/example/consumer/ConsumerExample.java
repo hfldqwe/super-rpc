@@ -2,9 +2,7 @@ package hfld.example.consumer;
 
 import hfld.example.common.model.User;
 import hfld.example.common.service.UserService;
-import hfld.rpc.config.RpcConfig;
 import hfld.rpc.proxy.ServiceProxyFactory;
-import hfld.rpc.utils.ConfigUtils;
 
 public class ConsumerExample {
 
@@ -21,7 +19,5 @@ public class ConsumerExample {
         } else {
             System.out.println("user == null");
         }
-//        short number = userService.getNumber();
-//        System.out.println(number);
     }
 }

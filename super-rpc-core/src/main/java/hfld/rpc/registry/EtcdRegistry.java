@@ -23,14 +23,14 @@ import java.util.stream.Collectors;
 
 public class EtcdRegistry implements Registry {
 
+    private Client client;
+
+    private KV kvClient;
+
     /**
      * 本机注册的节点 key 集合 （用于维护续期）
      */
     private final Set<String> localRegisterNodeKeySet = new HashSet<>();
-
-    private Client client;
-
-    private KV kvClient;
 
     /**
      * 根节点
@@ -45,7 +45,7 @@ public class EtcdRegistry implements Registry {
     /**
      * 注册中心服务缓存
      */
-    private final RegistryServiceCache registryServiceCache = new RegistryServiceCache();
+    private RegistryServiceCache registryServiceCache = new RegistryServiceCache();
 
     @Override
     public void init(RegistryConfig registryConfig) {
@@ -195,7 +195,9 @@ public class EtcdRegistry implements Registry {
                         case DELETE:
                             // 清理注册服务缓存
                             registryServiceCache.clearCache();
+                            break;
                         case PUT:
+                            System.out.println("PUT");
                         default:
                             break;
                     }
