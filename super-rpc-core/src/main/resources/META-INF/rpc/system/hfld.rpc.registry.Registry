@@ -1,1 +1,2 @@
 etcd=hfld.rpc.registry.EtcdRegistry
+zookeeper=hfld.rpc.registry.ZooKeeperRegistry
