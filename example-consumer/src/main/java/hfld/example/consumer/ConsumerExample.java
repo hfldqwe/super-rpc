@@ -15,7 +15,7 @@ public class ConsumerExample {
         // 调用
         User newUser = userService.getUser(user);
         if (newUser != null) {
-            System.out.println(newUser.getName());
+            System.out.println("user == "+newUser.getName());
         } else {
             System.out.println("user == null");
         }

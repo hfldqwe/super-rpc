@@ -1,8 +1,6 @@
 package hfld.rpc.proxy;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
 import hfld.rpc.RpcApplication;
 import hfld.rpc.config.RpcConfig;
 import hfld.rpc.constant.RpcConstant;
@@ -13,16 +11,38 @@ import hfld.rpc.registry.Registry;
 import hfld.rpc.registry.RegistryFactory;
 import hfld.rpc.serializer.Serializer;
 import hfld.rpc.serializer.SerializerFactory;
+import hfld.rpc.server.tcp.VertxTcpClient;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
 public class ServiceProxy implements InvocationHandler {
 
+    /**
+     * 调用代理
+     * @param proxy the proxy instance that the method was invoked on
+     *
+     * @param method the {@code Method} instance corresponding to
+     * the interface method invoked on the proxy instance.  The declaring
+     * class of the {@code Method} object will be the interface that
+     * the method was declared in, which may be a superinterface of the
+     * proxy interface that the proxy class inherits the method through.
+     *
+     * @param args an array of objects containing the values of the
+     * arguments passed in the method invocation on the proxy instance,
+     * or {@code null} if interface method takes no arguments.
+     * Arguments of primitive types are wrapped in instances of the
+     * appropriate primitive wrapper class, such as
+     * {@code java.lang.Integer} or {@code java.lang.Boolean}.
+     *
+     * @return
+     * @throws Throwable
+     */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         // 指定序列化器
@@ -53,19 +73,12 @@ public class ServiceProxy implements InvocationHandler {
             }
             ServiceMetaInfo selectedServiceMetaInfo = serviceMetaInfoList.get(0);
 
-            // 发送请求
-            try (HttpResponse httpResponse = HttpRequest.post(selectedServiceMetaInfo.getServiceAddress())
-                    .body(bodyBytes)
-                    .execute()) {
-                byte[] result = httpResponse.bodyBytes();
-                // 反序列化
-                RpcResponse rpcResponse = serializer.deserialize(result, RpcResponse.class);
-                return rpcResponse.getData();
-            }
+            // 发送 TCP 请求
+            RpcResponse rpcResponse = VertxTcpClient.doRequest(rpcRequest, selectedServiceMetaInfo);
+            return rpcResponse.getData();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.info("服务调用失败，serializer：{}，rpcRequest：{}", serializer, rpcRequest);
+            throw new RuntimeException("服务调用失败");
         }
-
-        return null;
     }
 }

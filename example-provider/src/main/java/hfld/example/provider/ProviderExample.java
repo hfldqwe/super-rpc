@@ -10,6 +10,8 @@ import hfld.rpc.registry.Registry;
 import hfld.rpc.registry.RegistryFactory;
 import hfld.rpc.server.HttpServer;
 import hfld.rpc.server.VertxHttpServer;
+import hfld.rpc.server.tcp.VertxTcpClient;
+import hfld.rpc.server.tcp.VertxTcpServer;
 
 public class ProviderExample {
 
@@ -35,8 +37,8 @@ public class ProviderExample {
             throw new RuntimeException(e);
         }
 
-        // 启动web服务
-        HttpServer httpServer = new VertxHttpServer();
-        httpServer.doStart(rpcConfig.getServerPort());
+        // 启动 TCP 服务
+        VertxTcpServer vertxTcpServer = new VertxTcpServer();
+        vertxTcpServer.doStart(rpcConfig.getServerPort());
     }
 }
