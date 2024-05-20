@@ -1,0 +1,2 @@
+no=hfld.rpc.fault.retry.NoRetryStrategy
+fixedInterval=hfld.rpc.fault.retry.FixedIntervalRetryStrategy

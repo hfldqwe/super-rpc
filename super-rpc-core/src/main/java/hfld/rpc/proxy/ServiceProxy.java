@@ -4,6 +4,8 @@ import cn.hutool.core.collection.CollUtil;
 import hfld.rpc.RpcApplication;
 import hfld.rpc.config.RpcConfig;
 import hfld.rpc.constant.RpcConstant;
+import hfld.rpc.fault.retry.RetryStrategy;
+import hfld.rpc.fault.retry.RetryStrategyFactory;
 import hfld.rpc.loadbalancer.LoadBalancer;
 import hfld.rpc.loadbalancer.LoadBalancerFactory;
 import hfld.rpc.model.RpcRequest;
@@ -72,10 +74,9 @@ public class ServiceProxy implements InvocationHandler {
             serviceMetaInfo.setServiceVersion(RpcConstant.DEFAULT_SERVICE_VERSION);
             log.info("调用服务信息：{}", serviceMetaInfo);
             List<ServiceMetaInfo> serviceMetaInfoList = registry.serviceDiscovery(serviceMetaInfo.getServiceKey());
-            if (CollUtil.isEmpty(serviceMetaInfoList)) {
+            if (serviceMetaInfoList==null || serviceMetaInfoList.isEmpty()) {
                 throw new RuntimeException("暂无服务地址");
             }
-
             // 负载均衡
             LoadBalancer loadBalancer = LoadBalancerFactory.getInstance(rpcConfig.getLoadBalancer());
             // 将调用方法名（请求路径）作为负载均衡参数
@@ -83,8 +84,12 @@ public class ServiceProxy implements InvocationHandler {
             requestParams.put("methodName", rpcRequest.getMethodName());
             ServiceMetaInfo selectedServiceMetaInfo = loadBalancer.select(requestParams, serviceMetaInfoList);
 
-            // 发送 TCP 请求
-            RpcResponse rpcResponse = VertxTcpClient.doRequest(rpcRequest, selectedServiceMetaInfo);
+            // rpc 请求
+            // 使用重试机制
+            RetryStrategy retryStrategy = RetryStrategyFactory.getInstance(rpcConfig.getRetryStrategy());
+            RpcResponse rpcResponse = retryStrategy.doRetry(() ->
+                    VertxTcpClient.doRequest(rpcRequest, selectedServiceMetaInfo)
+            );
             return rpcResponse.getData();
         } catch (IOException e) {
             log.info("服务调用失败，serializer：{}，rpcRequest：{}", serializer, rpcRequest);

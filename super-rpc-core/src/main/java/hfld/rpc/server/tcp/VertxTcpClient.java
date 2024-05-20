@@ -28,7 +28,7 @@ public class VertxTcpClient {
      * @param serviceMetaInfo
      * @return
      */
-    public static RpcResponse doRequest(RpcRequest rpcRequest, ServiceMetaInfo serviceMetaInfo) throws ExecutionException, InterruptedException {
+    public static RpcResponse doRequest(RpcRequest rpcRequest, ServiceMetaInfo serviceMetaInfo) throws Exception {
         // 发送 TCP 请求
         Vertx vertx = Vertx.vertx();
         NetClient netClient = vertx.createNetClient();
@@ -36,8 +36,7 @@ public class VertxTcpClient {
         netClient.connect(serviceMetaInfo.getServicePort(), serviceMetaInfo.getServiceHost(),
                 result -> {
                     if (!result.succeeded()) {
-                        log.error("TCP服务器连接失败");
-                        return;
+                        responseFuture.completeExceptionally(new RuntimeException("TCP服务连接失败"));
                     }
                     log.info("连接到TCP服务器");
                     NetSocket socket = result.result();
@@ -66,7 +65,7 @@ public class VertxTcpClient {
                             ProtocolMessage<RpcResponse> rpcResponseProtocolMessage = (ProtocolMessage<RpcResponse>) ProtocolMessageDecoder.decode(buffer);
                             responseFuture.complete(rpcResponseProtocolMessage.getBody());
                         } catch (IOException e) {
-                            throw new RuntimeException("协议消息解码错误");
+                            responseFuture.completeExceptionally(new RuntimeException("协议消息解码错误"));
                         }
                     });
                     socket.handler(bufferHandlerWrapper);

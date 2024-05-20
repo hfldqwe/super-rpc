@@ -1,5 +1,6 @@
 package hfld.rpc.config;
 
+import hfld.rpc.fault.retry.RetryStrategyKeys;
 import hfld.rpc.loadbalancer.LoadBalancer;
 import hfld.rpc.loadbalancer.LoadBalancerKeys;
 import hfld.rpc.serializer.SerializerKeys;
@@ -38,4 +39,9 @@ public class RpcConfig {
      * 负载均衡器
      */
     private String loadBalancer = LoadBalancerKeys.ROUND_ROBIN;
+
+    /**
+     * 重试策略
+     */
+    private String retryStrategy = RetryStrategyKeys.NO;
 }
