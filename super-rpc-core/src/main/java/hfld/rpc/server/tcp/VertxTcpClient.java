@@ -53,8 +53,8 @@ public class VertxTcpClient {
                     protocolMessage.setBody(rpcRequest);
                     // 编码请求
                     try {
-                        Buffer encodeBudder = ProtocolMessageEncoder.encode(protocolMessage);
-                        socket.write(encodeBudder);
+                        Buffer encodeBuffer = ProtocolMessageEncoder.encode(protocolMessage);
+                        socket.write(encodeBuffer);
                     } catch (IOException e) {
                         throw new RuntimeException("协议消息编码错误");
                     }

@@ -1,0 +1,4 @@
+failBack=hfld.rpc.fault.tolerant.FailBackTolerantStrategy
+failFast=hfld.rpc.fault.tolerant.FailFastTolerantStrategy
+failOver=hfld.rpc.fault.tolerant.FailOverTolerantStrategy
+failSafe=hfld.rpc.fault.tolerant.FailSafeTolerantStrategy

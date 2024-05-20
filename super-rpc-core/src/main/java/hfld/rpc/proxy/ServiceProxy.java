@@ -6,6 +6,8 @@ import hfld.rpc.config.RpcConfig;
 import hfld.rpc.constant.RpcConstant;
 import hfld.rpc.fault.retry.RetryStrategy;
 import hfld.rpc.fault.retry.RetryStrategyFactory;
+import hfld.rpc.fault.tolerant.TolerantStrategy;
+import hfld.rpc.fault.tolerant.TolerantStrategyFactory;
 import hfld.rpc.loadbalancer.LoadBalancer;
 import hfld.rpc.loadbalancer.LoadBalancerFactory;
 import hfld.rpc.model.RpcRequest;
@@ -86,10 +88,17 @@ public class ServiceProxy implements InvocationHandler {
 
             // rpc 请求
             // 使用重试机制
-            RetryStrategy retryStrategy = RetryStrategyFactory.getInstance(rpcConfig.getRetryStrategy());
-            RpcResponse rpcResponse = retryStrategy.doRetry(() ->
-                    VertxTcpClient.doRequest(rpcRequest, selectedServiceMetaInfo)
-            );
+            RpcResponse rpcResponse;
+            try {
+                RetryStrategy retryStrategy = RetryStrategyFactory.getInstance(rpcConfig.getRetryStrategy());
+                rpcResponse = retryStrategy.doRetry(() ->
+                        VertxTcpClient.doRequest(rpcRequest, selectedServiceMetaInfo)
+                );
+            } catch (Exception e) {
+                // 容错机制
+                TolerantStrategy tolerantStrategy = TolerantStrategyFactory.getInstance(rpcConfig.getRetryStrategy());
+                rpcResponse = tolerantStrategy.doTolerant(null, e);
+            }
             return rpcResponse.getData();
         } catch (IOException e) {
             log.info("服务调用失败，serializer：{}，rpcRequest：{}", serializer, rpcRequest);

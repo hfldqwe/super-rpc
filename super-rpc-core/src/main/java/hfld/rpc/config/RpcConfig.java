@@ -1,6 +1,7 @@
 package hfld.rpc.config;
 
 import hfld.rpc.fault.retry.RetryStrategyKeys;
+import hfld.rpc.fault.tolerant.TolerantStrategyKeys;
 import hfld.rpc.loadbalancer.LoadBalancer;
 import hfld.rpc.loadbalancer.LoadBalancerKeys;
 import hfld.rpc.serializer.SerializerKeys;
@@ -44,4 +45,9 @@ public class RpcConfig {
      * 重试策略
      */
     private String retryStrategy = RetryStrategyKeys.NO;
+
+    /**
+     * 容错策略
+     */
+    private String tolerantStrategy = TolerantStrategyKeys.FAIL_FAST;
 }
