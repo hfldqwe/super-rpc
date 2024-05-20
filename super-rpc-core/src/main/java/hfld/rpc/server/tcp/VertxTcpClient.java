@@ -29,6 +29,7 @@ public class VertxTcpClient {
      * @return
      */
     public static RpcResponse doRequest(RpcRequest rpcRequest, ServiceMetaInfo serviceMetaInfo) throws Exception {
+        log.info("RPC远程调用 doRequest");
         // 发送 TCP 请求
         Vertx vertx = Vertx.vertx();
         NetClient netClient = vertx.createNetClient();
