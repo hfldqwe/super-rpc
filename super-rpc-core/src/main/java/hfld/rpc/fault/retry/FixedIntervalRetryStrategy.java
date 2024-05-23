@@ -26,7 +26,9 @@ public class FixedIntervalRetryStrategy implements RetryStrategy {
                 .withRetryListener(new RetryListener() {
                     @Override
                     public <V> void onRetry(Attempt<V> attempt) {
-                        log.warn("重试次数 {}", attempt.getAttemptNumber());
+                        if (attempt.getAttemptNumber() > 1) {
+                            log.warn("尝试次数 {}", attempt.getAttemptNumber());
+                        }
                     }
                 }).build();
         return retryer.call(callable);

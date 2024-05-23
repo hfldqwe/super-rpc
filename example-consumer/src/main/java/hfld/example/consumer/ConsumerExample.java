@@ -2,11 +2,15 @@ package hfld.example.consumer;
 
 import hfld.example.common.model.User;
 import hfld.example.common.service.UserService;
+import hfld.rpc.bootstrap.ConsumerBootstrap;
 import hfld.rpc.proxy.ServiceProxyFactory;
 
 public class ConsumerExample {
 
     public static void main(String[] args) {
+        // 服务提供者初始化
+        ConsumerBootstrap.init();
+
         // 获取代理
         UserService userService = ServiceProxyFactory.getProxy(UserService.class);
         User user = new User();
